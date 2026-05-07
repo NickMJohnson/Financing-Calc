@@ -1,73 +1,40 @@
-# React + TypeScript + Vite
+# Dental Treatment Financing Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Take-home build. A small web tool a dental office manager can use, in front of a patient, to walk through what insurance covers, what the patient owes, and a few payment plan options — updating in real time as the numbers change.
 
-Currently, two official plugins are available:
+## What it needs to do
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Inputs**
+- Treatment amount (default $1,000)
+- Insurance coverage % (0–100, slider or input)
+- Remaining annual insurance benefit
 
-## React Compiler
+**Outputs**
+- Insurance covered amount — capped at the remaining benefit
+- Patient out-of-pocket
+- Payment options, each with the monthly amount:
+  - Pay in full
+  - 3 months — no fee
+  - 6 months — 5% fee
+  - 12 months — 10% fee
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**The math**
+1. `estimate = treatment × coverage%`
+2. `covered  = min(estimate, remaining benefit)`
+3. `out-of-pocket = treatment − covered`
+4. `monthly  = (out-of-pocket × (1 + fee)) / months`
 
-## Expanding the ESLint configuration
+**Edge cases:** 0% / 100% coverage, $0 remaining benefit, decimal inputs, negative or empty inputs (clamp to something sensible). All money displayed to two decimal places.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Plan
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Vite + React + TypeScript scaffold.
+2. Pure calc functions in `src/lib` with no React imports, plus unit tests for the cap behavior and each financing plan.
+3. A thin validation layer that clamps junk inputs (negatives, > 100%, NaN) before they reach the calc.
+4. UI on top of a `useCalculator` hook — inputs panel, results panel, payment option cards.
+5. Tailwind for layout. No submit button, everything updates live.
+6. Deploy to Vercel if time allows.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## How to run 
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Tradoffs and Assumptions
