@@ -18,7 +18,7 @@ export function MoneyInput({ id, label, value, onChange, hint }: Props) {
           inputMode="decimal"
           min="0"
           step="0.01"
-          value={Number.isFinite(value) ? value : ''}
+          defaultValue={Number.isFinite(value) ? value : ''}
           onChange={(e) => {
             const n = parseFloat(e.target.value);
             onChange(Number.isFinite(n) ? Math.max(0, n) : 0);
