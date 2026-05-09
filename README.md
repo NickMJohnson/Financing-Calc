@@ -6,8 +6,6 @@ A web tool a dental office manager can use, in front of a patient, to walk throu
 
 ![Calculator screenshot](./docs/screenshot.png)
 
-## What it does
-
 **Inputs**
 - Treatment amount (default $1,000)
 - Insurance coverage % (0–100, slider + numeric input)
