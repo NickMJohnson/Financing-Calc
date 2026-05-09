@@ -49,7 +49,7 @@ src/
 4. monthly      = (out-of-pocket × (1 + fee)) / months 
 5. Monthly payments reconcile to the rounded total: residual cents go on the last payment.
 
-All money is held internally as integer cents; the display layer formats to two decimal places via `Intl.NumberFormat`. 
+All money is held internally as integer cents; the display layer formats to two decimal places via Intl.NumberFormat. 
 
 ## Assumptions
 
@@ -57,13 +57,13 @@ All money is held internally as integer cents; the display layer formats to two 
 - Insurance never goes negative — capped at min(coverage% × treatment, remaining benefit).
 - Coverage clamped to 0–100; treatment and remaining-benefit clamped to ≥ 0. Negative and non-finite (NaN, Infinity from parsing an empty string) inputs are coerced to zero rather than rejected 
 - All money math is done in integer cents: round to nearest cent at every multiplication step.
-- Payments must reconcile in all situations (e.g., 3 payments on a $100.00 bill must sum to exactly $100.00 `[$33.33, $33.33, $33.34]`). If there is a remainder when dividing payments, it goes on the final payment.
+- Payments must reconcile in all situations (e.g., 3 payments on a $100.00 bill must sum to exactly $100.00 [$33.33, $33.33, $33.34]). If there is a remainder when dividing payments, it goes on the final payment.
 
 
 ## Tradeoffs and design decisions
 
 
-- **Asymmetric two-column layout** The UI is designed to be easy for a dentist or receptiontist to show patient. The inputs sit in a smaller left column (That will be guided by receptionist). The outputs, coverage amount and payment plan options fill a larger right column that is easy for the patient to see. The user interface is minimalist with large high contrast number making it easy for any user to understand even at some distance. The "Print Estimate" button is also designed to make it easy to hand patient a quick summary of thier options.
+- **Asymmetric two-column layout** The UI is designed to be easy for a dentist or receptionist to show patient. The inputs sit in a smaller left column (That will be guided by receptionist). The outputs, coverage amount and payment plan options fill a larger right column that is easy for the patient to see. The user interface is minimalist with large high contrast number making it easy for any user to understand even at some distance. The "Print Estimate" button is also designed to make it easy to hand patient a quick summary of their options.
 - **Real-time calc on every keystroke.** The math takes microseconds, so easy and relevant to update live. Allows dentist to give patient a live view of their expected out of pocket cost at different coverage amounts. 
 - **Single-step fee rounding.** total = round(oop × (1 + fee)) is computed in one rounding pass, not as oop + round(oop × fee). The latter double-rounds and can drift by a cent.
 - **Integer cents in a small helper rather than a library.**  Money represented as integer cents in a small helper rather than a library. This avoids runtime dependency for about 30 lines of code. If the calculator expanded to multi-currency support or more advanced math, I'd switch to a library.
