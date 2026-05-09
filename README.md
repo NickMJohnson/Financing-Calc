@@ -1,8 +1,8 @@
 # Dental Treatment Financing Calculator
 
-A web tool a dental office manager can use, in front of a patient, to walk through what insurance covers, what the patient owes, and a few payment plan options — updating in real time as the numbers change.
+A web tool a dental office manager can use, in front of a patient, to walk through what insurance covers, what the patient owes, and a few payment plan options.
 
-**Live demo:** https://dentalfinancing.vercel.app
+**Live demo:** [Financing Calculator](https://dentalfinancing.vercel.app)
 
 ![Calculator screenshot](./docs/screenshot.png)
 
