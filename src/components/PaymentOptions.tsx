@@ -18,9 +18,7 @@ export function PaymentOptions({ result }: Props) {
 
           const metaText = isPayInFull
             ? 'Due today'
-            : hasFee
-              ? `${o.plan.months} months · ${feeText}`
-              : `${o.plan.months} months`;
+            : `${o.plan.months} months · ${hasFee ? feeText : 'No fee'}`;
 
           return (
             <article key={o.plan.id} className="option-card">

@@ -6,9 +6,7 @@ export type FinancingPlan = {
   readonly feeRate: number; // 0.05 = 5% flat fee on the financed amount
 };
 
-// Pay-in-full is modeled as months: 1 so it shares the FinancingOption shape.
-// Consumers should special-case id === 'pay-in-full' in the UI rather than
-// rendering it as "1 monthly payment".
+// Pay-in-full is modeled as months: 1 feeRate 0 
 export const FINANCING_PLANS = [
   { id: 'pay-in-full', label: 'Pay in full',         months: 1,  feeRate: 0    },
   { id: '3-month',     label: '3 monthly payments',  months: 3,  feeRate: 0    },
