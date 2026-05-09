@@ -114,6 +114,16 @@ describe('calculate — edge cases', () => {
     expect(r.insuranceCoveredCents).toBe(0);
     expect(r.outOfPocketCents).toBe(0);
   });
+
+  it('clamps negative treatment to 0', () => {
+    const r = calculate({
+      treatmentDollars: -500,
+      coveragePercent: 50,
+      remainingBenefitDollars: 1000,
+    });
+    expect(r.treatmentCents).toBe(0);
+    expect(r.outOfPocketCents).toBe(0);
+  });
 });
 
 describe('financing options', () => {
@@ -162,6 +172,36 @@ describe('financing options', () => {
     const threeMonth = r.options.find((o) => o.plan.id === '3-month')!;
     expect(threeMonth.monthlyPayments).toEqual([3333, 3333, 3334]);
     expect(threeMonth.monthlyPayments.reduce((a, b) => a + b, 0)).toBe(10000);
+  });
+
+  it('reconciles residual on 12-month plan', () => {
+    // $100 oop with 10% fee = 11000 cents / 12 = 916.66...
+    // base = 916, residual = 8, last payment = 924
+    const r = calculate({
+      treatmentDollars: 100,
+      coveragePercent: 0,
+      remainingBenefitDollars: 0,
+    });
+    const twelve = r.options.find((o) => o.plan.id === '12-month')!;
+    expect(twelve.totalCents).toBe(11000);
+    expect(twelve.monthlyPayments).toHaveLength(12);
+    expect(twelve.monthlyPayments.reduce((a, b) => a + b, 0)).toBe(11000);
+    expect(twelve.monthlyPayments[11]).toBeGreaterThan(twelve.monthlyPayments[0]);
+    expect(twelve.monthlyPayments[11] - twelve.monthlyPayments[0]).toBeLessThan(12);
+  });
+
+  it('rounds fee correctly on odd-cent amounts', () => {
+    // $123.45 oop, 6-month: 12345 * 1.05 = 12962.25 → 12962 cents
+    // base = 2160, residual = 2, last = 2162
+    const r = calculate({
+      treatmentDollars: 123.45,
+      coveragePercent: 0,
+      remainingBenefitDollars: 0,
+    });
+    const six = r.options.find((o) => o.plan.id === '6-month')!;
+    expect(six.totalCents).toBe(12962);
+    expect(six.monthlyPayments.reduce((a, b) => a + b, 0)).toBe(12962);
+    expect(six.monthlyPayments[5]).toBe(2162);
   });
 
   it('all plans return a populated options array even when out-of-pocket is 0', () => {
