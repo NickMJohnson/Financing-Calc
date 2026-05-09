@@ -38,3 +38,29 @@ Take-home build. A small web tool a dental office manager can use, in front of a
 ## How to run 
 
 ## Tradoffs and Assumptions
+
+
+1) Implement money helper first. 
+  - Use branded Cents type makes sure we can't pass number or dollars to a funciton expecting cents. Represent money as integer cents. Display layer converts to dollars with two decimal places. 
+  - 
+
+# Money Helper
+  Assumptions: 
+  - All amounts are in USD with two decimal place precision. Sub cent amounts and non US currency are out of scope.
+  - Negative and non finite (Nan, Infinity from parsing empty string) inputs are coerced to zero rather than rejected. Keeps calc usable while editing.
+  - All money math is done in integer cents -- round to nearest cent at every multiplication step 
+  - We want payments to reconcile in all situations (e.g. 3 payments on a $100.00 bill must == $100.00. Payments = [$33.33, $33.33, $33.34]) If there is a remainder when deviding payments, add to final payment. 
+
+  Tradeoffs: 
+  - Money represented as integer cents in a small helper rather than a library. This avoids runtime dependency for about 30 lines of code. // Maybe: If the calculator needed to expand to multi currency support, or more advanced calculations I would switch to a library. 
+  - Branded Typescript type: type Cents = number & { __brand: 'Cents' } used instead of wrapper class. Values stay as normal numbers at runtime - zero overhead and easy to inspect in debugger while the compiler still prevents passing dollars where cents are expected.
+  -
+
+
+  # Finance Config
+  Assumptions: 
+  - The financing fee schedules should be easy to change and therefore stored in config file rather than be embedded in the UI
+  Tradeoffs: 
+  - For the pay in full option model as a one month plan with zero fee instead of a special case.
+
+  
